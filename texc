@@ -1,0 +1,82 @@
+#!/bin/bash
+
+FILEPATH="$( realpath "$1" )"
+FILENAME="$( basename -s .tex  "$FILEPATH" )" 
+FILEDIR="$( dirname "$FILEPATH" )"
+
+compile () {
+	read -p "[Y] Yes [N] No [A] Abort [?] Help (default is \"Y\"): " A
+	case "$A" in
+		[nN])
+			clear
+			echo "Open \""$FILENAME".pdf\"?"
+			output 
+			;;
+		[aA])
+			clear
+			;;
+		[?])
+			echo "Y - Compile \""$FILENAME".tex\" to generate a pdf output." 
+			echo "N - Skip compilation."
+			echo "A - Abort script execution."
+			compile
+			;;
+		*)
+			xelatex ""$FILENAME".tex" 
+			bibtex ""$FILENAME".aux"
+			xelatex ""$FILENAME".tex" 
+			xelatex ""$FILENAME".tex"
+			rm *.aux
+			rm *.bbl
+			rm *.blg
+			rm *.log
+			rm *.nav
+			rm *.out
+			rm *.snm
+			rm *.toc
+			clear
+			echo "Open \""$FILENAME".pdf\"?"
+			output
+			;;
+	esac
+}
+
+output () {
+	read -p "[Y] Yes [N] No [A] Abort [?] Help (default is \"Y\"): " B
+	case "$B" in
+		[nN])
+			clear
+			echo "Recompile \""$FILENAME".tex\"?"
+			compile
+			;;
+		[aA])
+			clear
+			cd "$PWD"
+			;;
+		[?])
+			echo "Y - Open \""$FILENAME".pdf\"." 
+			echo "N - Proceed to compilation."
+			echo "A - Abort script execution."
+			compile
+			;;
+		*)
+			OPEN="$( wmctrl -l | grep ""$FILEDIR"/"$FILENAME".pdf" )"  
+			if [ -z "$OPEN"  ]
+			then
+				zathura -c ""$HOME"/.config/zathura" ""$FILEDIR"/"$FILENAME".pdf" &
+				clear
+				echo "Recomplile \""$FILENAME".tex\"?"
+				compile
+			else
+				wmctrl -a ""$FILEDIR"/"$FILENAME".pdf"
+				clear
+				echo "Recompile \""$FILENAME".tex\"?"
+				compile
+			fi
+		esac
+}
+
+clear
+cd "$FILEDIR"
+echo "Compile \""$FILENAME".tex\"?"
+compile
