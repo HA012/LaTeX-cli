@@ -1,6 +1,6 @@
 # LaTeX-cli
 
-Bash script that allows the user to (re)compile LaTeX files from the terminal and view the pdf output after each compilation process. 
+Bash script that allows the user to (re)compile LaTeX files from the terminal and view the pdf output after each compilation. 
 
 ## About the Script
 
@@ -19,7 +19,9 @@ By including the path to the script in PATH, the user will be able to run it fro
 
 Assuming that FILENAME.tex is in the current working directory, and that the user has included the path to the script among the values of PATH (or moved the script to one of its previous values), run:        
 
->>$texc FILENAME.tex 
+```
+$texc FILENAME.tex 
+```
 
 ## Screenshots
 
